@@ -39,7 +39,6 @@ var server = http.createServer(function (req, res) {
                         var relPath=path.relative(filePath,file);
                         console.log("相对路径"+relPath.toString())
 
-
                         //extname获取文件后缀名
                         //console.log("extname"+path.extname(__filename));
 
