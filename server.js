@@ -52,6 +52,7 @@ var server = http.createServer(function (req, res) {
                             res.writeHead(200, {"Content-Type": "text/html"});
                             // console.log("文件名称："+file);
 
+                            addStr+='<a href="/'+file+'">'+file+'</a><br/>';
 
                             //打开文件
                             //fs.open(file,"r","0666",function(err,fd){
