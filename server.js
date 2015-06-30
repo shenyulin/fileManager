@@ -15,7 +15,6 @@ var server = http.createServer(function (req, res) {
     }else{
         filePath=filePath+"/"+req.url;
     }
-
     console.log(filePath);
 
     //判断文件是否存在
