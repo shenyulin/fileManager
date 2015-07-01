@@ -1,72 +1,83 @@
 var http = require("http");
 var fs = require("fs");
 var path = require("path");
+var url = require("url");
+var mime = require('mime');   //文件的类型
 var server = http.createServer(function (req, res) {
-    //获取文件的路劲
+
+    //获取文件的路径
     var filePath = path.resolve();
 
-    //系统份文件分隔符
-    var sep=path.sep;
-    //console.log( "系统份文件分隔符"+path.sep);
-
-    //获取请求的url
-    if(req.url=="/"){
-        // console.log(req.url);
-    }else{
-        filePath=filePath+"/"+req.url;
+    //icon请求忽略
+    if (req.url == '/favicon.ico') {
+        res.end();
+        return;
     }
-    console.log(filePath);
+
+    //系统份文件分隔符
+    //var sep=path.sep;
+
+    //访问请求的文件地址标准化
+    var reqPath = path.normalize(req.url);
+
+    // var reqPath =req.url;
+
+
+    //获取当文件的路径
+    var pathname = path.join(filePath, reqPath);
 
     //判断文件是否存在
-    fs.exists(filePath,function(exists){
+    fs.exists(pathname, function (exists) {
 
         //文件存在
-        if(exists){
+        if (exists) {
 
-            //遍历文件
-            fs.readdir(filePath,function(err,files){
-                if(err){
-                    res.end(err);
-                }else{
-                    var  addStr="";
-                    files.forEach(function(file){
+            //判断是否是目录
+            if (fs.statSync(pathname).isDirectory()) {
+                var addStr = '<link rel="stylesheet" href="/public/css/index.css"/>';
+                addStr += '<h1>FileManager system directory</h1>';
+                addStr += '<ul>';
 
-                        //获取当文件的路劲
-                        var pathname = path.join(filePath, file);
+                //遍历文件
+                fs.readdir(pathname, function (err, files) {
+                    res.writeHead(200, {"Content-Type": "text/html;charset=utf-8"});
 
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        files.forEach(function (file) {
+                            if (pathname != filePath) {
+                                pathname = pathname.replace(filePath, "");
+                            }
+                            filePath1 = path.join(pathname, file).replace(/\\/g, "/");
 
-                        var relPath=path.relative(filePath,file);
-                        console.log("相对路径"+relPath.toString())
+                            if (path.extname(file)) {
+                                addStr += '<li class="gray"><a href="' + filePath1 + '" style="">' + file + ' </a></li>';
+                            } else {
+                                addStr += '<li ><a href="' + filePath1 + '" style="">' + file + '</a></li>';
+                            }
+                        });
+                    }
+                    res.end(addStr + "</ul><p>提示：以上目录列表，蓝色是文件夹，可点击继续进入下一节。</p>");
+                });
+            } else if (fs.statSync(pathname).isFile()) {
 
-                        //extname获取文件后缀名
-                        //console.log("extname"+path.extname(__filename));
-
-                        //判断是文件夹还是文件
-                        if (fs.statSync(pathname).isDirectory()) {
-                            addStr+='<a href="/'+file+'">'+file+'</a><br/>';
-                        }
-                        else{
-                            //判断文件的类型
-                            res.writeHead(200, {"Content-Type": "text/html"});
-                            // console.log("文件名称："+file);
-
-                            addStr+='<a href="/'+file+'">'+file+'</a><br/>';
-
-                            //打开文件
-                            //fs.open(file,"r","0666",function(err,fd){
-                            //     console.log(fd);
-                            //});
-                        }
-                    });
-                    res.end(addStr);
-                }
-            });
-
-        }else{
+                //当访问的是文件时，判断文件类型，并读文件
+                res.writeHead(200, {'Content-Type': mime.lookup(path.basename(pathname)) + ';charset=utf-8'});
+                fs.readFile(pathname, {flag: "r"}, function (err, data) {
+                    if (err) {
+                        res.end(err);
+                    } else {
+                        res.end(data);
+                    }
+                });
+            }
+        } else {
             res.writeHead(404, {"Content-Type": "text/html"});
-            res.write('<span style="color:red">"'+filePath + '"</span> was not found on this server.');
+            res.write('<span style="color:red">"' + pathname + '"</span> was not found on this server.');
             res.end();
         }
     });
+
 });
 server.listen(8080);

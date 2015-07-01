@@ -1,0 +1,52 @@
+html, body {
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+}
+
+div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, button, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: #000;
+    padding: 15px 10px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+    box-shadow: 0 3px 5px #ccc;
+    font-weight: normal;
+    font-size: 30px;
+}
+
+ul {
+    width: 90%;
+    margin: 50px 5%;
+}
+
+ul li {
+    list-style: decimal inside;
+    border-bottom: 1px dashed #ccc;
+    font: 20px arial;
+    color: #105eb5;
+    padding-left: 15px;
+}
+
+a {
+    color: #105eb5;
+    text-decoration: none;
+    margin: 10px 0;
+    display: inline-block;
+    margin-left: 15px;
+}
+
+ul li.gray {
+    color: #333;
+    background-color: #fafafa;
+}
+
+ul li.gray a {
+    color: #333;
+}
+  p{margin: 50px 5%;border: 1px solid #f3ac31;padding:15px;background-color: rgba(255,255,0,0.1);color: #f5831e;font:14px 'Microsoft YaHei'; }
